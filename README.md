@@ -18,13 +18,13 @@ This tool is designed to facilitate the copying of code snippets from multiple f
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/clipboard-code-copy-tool.git
+   git clone https://github.com/HRmemon/copy_python_files.git
    ```
 
 2. Navigate to the cloned directory:
 
    ```bash
-   cd clipboard-code-copy-tool
+   cd copy_python_files
    ```
 
 3. Install the required dependencies:
@@ -57,6 +57,22 @@ Example usage with optional arguments:
 
 ```bash
 python clipboard_copy.py /path/to/source/directory --include_ext .py --exclude_dirs tests --modify_python
+```
+
+### Help
+
+For more information on the available options, use the `--help` flag:
+
+```bash
+python clipboard_copy.py --help
+```
+
+## Testing
+
+To run the tests for this tool, execute the following command:
+
+```bash
+python -m unittest copy_file_test.py
 ```
 
 ## License
