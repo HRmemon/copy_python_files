@@ -75,6 +75,10 @@ To run the tests for this tool, execute the following command:
 python -m unittest copy_file_test.py
 ```
 
+## Support
+
+If you find this tool helpful, please consider giving it a star on GitHub. Your support is greatly appreciated!
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
