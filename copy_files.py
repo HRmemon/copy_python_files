@@ -48,8 +48,8 @@ def process_content(content, modify_python):
                     definition_pattern = False
                     if in_definition_docstring:
                         in_definition_docstring = False
-                        continue 
-                else: 
+                        continue
+                else:
                     continue
             elif in_definition_docstring:
                 continue
@@ -98,7 +98,36 @@ def process_content(content, modify_python):
     return '\n'.join(new_content)
 
 
-def copy_files_to_clipboard(src, include_ext=None, exclude_ext=None, include_dirs=None, exclude_dirs=None, modify_python=False):
+def copy_to_clipboard(path, include_ext=None, exclude_ext=None, include_dirs=None, exclude_dirs=None, modify_python=False):
+    if os.path.isdir(path):
+        copy_directory_to_clipboard(path, include_ext, exclude_ext, include_dirs, exclude_dirs, modify_python)
+    elif os.path.isfile(path):
+        copy_file_to_clipboard(path, modify_python)
+
+
+def copy_file_to_clipboard(file_path, modify_python):
+    print(f"Processing: {file_path}")
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    modified_content = process_content(content, modify_python and Path(file_path).suffix == '.py')
+    clipboard_content = f"# File: {file_path}\n{modified_content}\n\n"
+    pyperclip.copy(clipboard_content)
+    print("File copied to clipboard.")
+
+def copy_files_to_clipboard(files, modify_python=True):
+    clipboard_content = ""
+    for file_path in files:
+        print(f"Processing: {file_path}")
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        modified_content = process_content(content, modify_python and Path(file_path).suffix == '.py')
+        clipboard_content += f"# File: {file_path}\n{modified_content}\n\n"
+
+    pyperclip.copy(clipboard_content)
+
+def copy_directory_to_clipboard(src, include_ext=None, exclude_ext=None, include_dirs=None, exclude_dirs=None, modify_python=False):
     clipboard_content = ""
     for root, dirs, files in os.walk(src):
         if include_dirs:
@@ -113,6 +142,7 @@ def copy_files_to_clipboard(src, include_ext=None, exclude_ext=None, include_dir
             if exclude_ext and file_path.suffix in exclude_ext:
                 continue
 
+            print(f"Processing: {file_path}")
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
 
@@ -128,7 +158,7 @@ def copy_files_to_clipboard(src, include_ext=None, exclude_ext=None, include_dir
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Copy files' contents to the clipboard with optional filtering and modification.")
-    parser.add_argument("source", type=str, help="Source directory path")
+    parser.add_argument("source", type=str, help="Source directory path or file path")
     parser.add_argument("--include_ext", nargs='*',
                         help="Extensions to include")
     parser.add_argument("--exclude_ext", nargs='*',
@@ -139,7 +169,20 @@ if __name__ == "__main__":
                         help="Directories to exclude")
     parser.add_argument("--modify_python", action='store_true',
                         help="Modify Python files to selectively omit content")
+    parser.add_argument("--gui", action='store_true',
+                        help="Run the GUI version of the script") 
+    
+    # by default modify_python is True
+    modify_python = True
+    # if modify_python:
+    #     modify_python = False
 
     args = parser.parse_args()
-    copy_files_to_clipboard(args.source, args.include_ext, args.exclude_ext,
-                            args.include_dirs, args.exclude_dirs, args.modify_python)
+    print(args.gui)
+    if args.gui:
+        from gui import FileProcessorApp
+        app = FileProcessorApp()
+        app.mainloop()
+    else:
+        copy_to_clipboard(args.source, args.include_ext, args.exclude_ext,
+                        args.include_dirs, args.exclude_dirs, modify_python)
