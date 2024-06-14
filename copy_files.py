@@ -178,11 +178,5 @@ if __name__ == "__main__":
     #     modify_python = False
 
     args = parser.parse_args()
-    print(args.gui)
-    if args.gui:
-        from gui import FileProcessorApp
-        app = FileProcessorApp()
-        app.mainloop()
-    else:
-        copy_to_clipboard(args.source, args.include_ext, args.exclude_ext,
-                        args.include_dirs, args.exclude_dirs, modify_python)
+    copy_to_clipboard(args.source, args.include_ext, args.exclude_ext,
+                    args.include_dirs, args.exclude_dirs, modify_python)
